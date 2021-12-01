@@ -9,17 +9,19 @@ public class Gameplay_Manager : MonoBehaviour
     public GameObject[] LevelM1;
     public GameObject[] LevelM2;
     public GameObject[] character;
+    public GameObject LvLCompletePanel;
+    public GameObject GameCompletePanel;
     private int currentLevel;
     private int pressCount;
     
     
     void Start()
     {
+        Debug.Log("Index is ==  "+PlayerPrefs.GetInt("SelectedLevelM1"));
         pressCount = 0;
         ActivateModeAndLevel();
         activateSelectedCharacter();
         InitiationDebug();
-        
     }
 
     private void Update()
@@ -36,20 +38,20 @@ public class Gameplay_Manager : MonoBehaviour
     }
     public void ActivateModeAndLevel()
     {
-        if (PlayerPrefs.GetString("Mode")=="Mode1")
+        if (PlayerPrefs.GetString("Mode")=="Mode1"&&PlayerPrefs.GetInt("SelectedLevelM1")<=3)
         {
             LevelM1[PlayerPrefs.GetInt("SelectedLevelM1")].SetActive(true);
-            //PlayerPrefs.GetInt("M1PressLimit");
             currentLevel = PlayerPrefs.GetInt("SelectedLevelM1");
             UI_Manager.instance.M1pressLimitAssign(PlayerPrefs.GetInt("M1PressLimit"));
-
         }
-        else if (PlayerPrefs.GetString("Mode")=="Mode2")
+         
+        else if (PlayerPrefs.GetString("Mode")=="Mode2"&&PlayerPrefs.GetInt("SelectedLevelM2")<=3)
         {
             LevelM2[PlayerPrefs.GetInt("SelectedLevelM2")].SetActive(true);
             currentLevel = PlayerPrefs.GetInt("SelectedLevelM2");
             UI_Manager.instance.M2pressLimitAssign(PlayerPrefs.GetInt("M2PressLimit"));
         }
+         
         //This function will simply check for the saved "Mode". Whether the player clicked on "Mode1" or "Mode2". 
         // The level[] will then be activated using the playerprefs that saved the level data, which level was clicked 
         // and the clicked level will be activated. "currentLevel" is set to be same as the value of selected level, it can
@@ -59,10 +61,9 @@ public class Gameplay_Manager : MonoBehaviour
     public void InitiationDebug()
     {
         Debug.Log(PlayerPrefs.GetString("SelectedCharacter"));
-        Debug.Log("Index for selected character is "+ PlayerPrefs.GetInt("selectedcharacter"));
-        Debug.Log("Selected Mode is  "+ PlayerPrefs.GetString("Mode"));
         Debug.Log("Selected Level Index== "+ currentLevel);
         Debug.Log("Press Count is " + pressCount);
+        Debug.Log("Selected Mode is ==  " + PlayerPrefs.GetString("Mode"));
     }
 
     public void pressFunctionality()
@@ -87,23 +88,33 @@ public class Gameplay_Manager : MonoBehaviour
 
     public void levelFunctionality()
     {
-        if (PlayerPrefs.GetString("Mode")=="Mode1")
+        //If level completion requirement (Pressing the button corresponding to press count of the level) is fulfilled, level completion panel will
+        // appear until level 4, after level 4, game completion panel will appear as level 5 is the last level.
+        if (PlayerPrefs.GetString("Mode")=="Mode1"&&PlayerPrefs.GetInt("SelectedLevelM1")<=3&&pressCount==PlayerPrefs.GetInt("M1PressLimit"))
         {
-            if (pressCount==PlayerPrefs.GetInt("M1PressLimit"))
-            {
-                Debug.Log("M1 Level Complete");
-            }
+            LvLCompletePanel.SetActive(true);
         }
-        else if (PlayerPrefs.GetString("Mode")=="Mode2")
+        else if(PlayerPrefs.GetString("Mode")=="Mode1"&&PlayerPrefs.GetInt("SelectedLevelM1")==4&&pressCount==PlayerPrefs.GetInt("M1PressLimit"))
         {
-            if (pressCount==PlayerPrefs.GetInt("M2PressLimit"))
-            {
-                Debug.Log("M2 Level Complete");
-            }
+            //LvLCompletePanel.SetActive(false);
+            GameCompletePanel.SetActive(true);
+        }
+       
+        //If level completion requirement (Pressing the button corresponding to press count of the level) is fulfilled, level completion panel will
+        // appear until level 4, after level 4, game completion panel will appear as level 5 is the last level. 
+        if (PlayerPrefs.GetString("Mode")=="Mode2"&&PlayerPrefs.GetInt("SelectedLevelM2")<=3&&pressCount==PlayerPrefs.GetInt("M2PressLimit"))
+        {
+           
+            LvLCompletePanel.SetActive(true);
+           
+            
+        }
+        else if(PlayerPrefs.GetString("Mode")=="Mode2"&&PlayerPrefs.GetInt("SelectedLevelM2")==4&&pressCount==PlayerPrefs.GetInt("M2PressLimit"))
+        {
+            GameCompletePanel.SetActive(true);
         }
         //Level Complete functionality. Level is completed based on user input, each spacebar press increments the presscount,
         //when presscount reaches presscount limit for that level, level is completed.
-        
     }
 
     public void lvLCompletePanelNextBTN()
@@ -111,35 +122,26 @@ public class Gameplay_Manager : MonoBehaviour
         if (PlayerPrefs.GetString("Mode")=="Mode1")
         {
             Debug.Log(" Click Functional For Mode 1");
-            //PlayerPrefs.SetInt("SelectedLevelM1",PlayerPrefs.GetInt("SelectedLevelM1"+1));
-            LevelM1[PlayerPrefs.GetInt("SelectedLevelM1")].SetActive(false);
             PlayerPrefs.SetInt("SelectedLevelM1",PlayerPrefs.GetInt("SelectedLevelM1")+1);
             SceneManager.LoadScene("Gameplay");
-            //PlayerPrefs.GetInt("M1PressLimit");
-            LevelM1[PlayerPrefs.GetInt("SelectedLevelM1")+1].SetActive(true);
             PlayerPrefs.SetInt("M1PressLimit",PlayerPrefs.GetInt("M1PressLimit")+1);
-            //UI_Manager.instance.M1pressLimitAssign(PlayerPrefs.GetInt("M1PressLimit"));
         }
+       
         else if (PlayerPrefs.GetString("Mode")=="Mode2")
         {
             Debug.Log(" Click Functional For Mode 2");
-            //PlayerPrefs.SetInt("SelectedLevelM1",PlayerPrefs.GetInt("SelectedLevelM1"+1));
-            LevelM2[PlayerPrefs.GetInt("SelectedLevelM2")].SetActive(false);
             PlayerPrefs.SetInt("SelectedLevelM2",PlayerPrefs.GetInt("SelectedLevelM2")+1);
             SceneManager.LoadScene("Gameplay");
-            //PlayerPrefs.GetInt("M1PressLimit");
-            LevelM1[PlayerPrefs.GetInt("SelectedLevelM2")+1].SetActive(true);
             PlayerPrefs.SetInt("M2PressLimit",PlayerPrefs.GetInt("M2PressLimit")+1);
-            //UI_Manager.instance.M1pressLimitAssign(PlayerPrefs.GetInt("M1PressLimit"));
         }
+        
+        // After the press count limit for a level in any of the available modes is reached, the level complete panel will appear
+        // with two options, nextlevel or home, if next level is clicked, next level of the respective mode will be loaded.
+        // This functionality will also work when selecting a random level from the main menu as long as all levels are unlocked/interactable
     }
 
     public void HomeButtonClick()
     {
         SceneManager.LoadScene("Main Menu");
     }
-
-   
-    
-    
 }
