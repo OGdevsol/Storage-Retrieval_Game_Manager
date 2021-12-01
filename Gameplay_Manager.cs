@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class Gameplay_Manager : MonoBehaviour
 {
+    #region Variables
+    
     public GameObject[] LevelM1;
     public GameObject[] LevelM2;
     public GameObject[] character;
@@ -14,7 +16,9 @@ public class Gameplay_Manager : MonoBehaviour
     private int currentLevel;
     private int pressCount;
     
-    
+    #endregion
+
+    #region Start/Update
     void Start()
     {
         Debug.Log("Index is ==  "+PlayerPrefs.GetInt("SelectedLevelM1"));
@@ -29,13 +33,19 @@ public class Gameplay_Manager : MonoBehaviour
         pressFunctionality();
         levelFunctionality();
     }
+    
+    #endregion
 
+    #region Activate Selected Character
     public void activateSelectedCharacter()
     {
         character[PlayerPrefs.GetInt("selectedcharacter")].SetActive(true);
         //Will activate the selected character with the help of a character[] array where characters are stored.
         
     }
+    #endregion
+
+    #region Generic Levels Initialization
     public void ActivateModeAndLevel()
     {
         if (PlayerPrefs.GetString("Mode")=="Mode1"&&PlayerPrefs.GetInt("SelectedLevelM1")<=3)
@@ -58,14 +68,11 @@ public class Gameplay_Manager : MonoBehaviour
         // be later used for other purposes such as level lock and unlock system, level objectives assignment etc.
     }
 
-    public void InitiationDebug()
-    {
-        Debug.Log(PlayerPrefs.GetString("SelectedCharacter"));
-        Debug.Log("Selected Level Index== "+ currentLevel);
-        Debug.Log("Press Count is " + pressCount);
-        Debug.Log("Selected Mode is ==  " + PlayerPrefs.GetString("Mode"));
-    }
+    
 
+    #endregion
+
+    #region KeyPress and Presscount increment
     public void pressFunctionality()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -85,7 +92,11 @@ public class Gameplay_Manager : MonoBehaviour
             //it has reached the press count limit.
         }
     }
+    
 
+    #endregion
+
+    #region Game/Level Completion
     public void levelFunctionality()
     {
         //If level completion requirement (Pressing the button corresponding to press count of the level) is fulfilled, level completion panel will
@@ -96,7 +107,7 @@ public class Gameplay_Manager : MonoBehaviour
         }
         else if(PlayerPrefs.GetString("Mode")=="Mode1"&&PlayerPrefs.GetInt("SelectedLevelM1")==4&&pressCount==PlayerPrefs.GetInt("M1PressLimit"))
         {
-            //LvLCompletePanel.SetActive(false);
+            
             GameCompletePanel.SetActive(true);
         }
        
@@ -116,6 +127,12 @@ public class Gameplay_Manager : MonoBehaviour
         //Level Complete functionality. Level is completed based on user input, each spacebar press increments the presscount,
         //when presscount reaches presscount limit for that level, level is completed.
     }
+
+    
+
+    #endregion
+
+    #region Game/Level Complete Panels Functionality
 
     public void lvLCompletePanelNextBTN()
     {
@@ -139,9 +156,23 @@ public class Gameplay_Manager : MonoBehaviour
         // with two options, nextlevel or home, if next level is clicked, next level of the respective mode will be loaded.
         // This functionality will also work when selecting a random level from the main menu as long as all levels are unlocked/interactable
     }
-
     public void HomeButtonClick()
     {
         SceneManager.LoadScene("Main Menu");
     }
+
+    #endregion
+
+    #region Debug.Log
+
+    public void InitiationDebug()
+    {
+        Debug.Log(PlayerPrefs.GetString("SelectedCharacter"));
+        Debug.Log("Selected Level Index== "+ currentLevel);
+        Debug.Log("Press Count is " + pressCount);
+        Debug.Log("Selected Mode is ==  " + PlayerPrefs.GetString("Mode"));
+    }
+
+    #endregion
+
 }
