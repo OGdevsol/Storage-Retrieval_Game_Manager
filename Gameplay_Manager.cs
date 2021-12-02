@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class Gameplay_Manager : MonoBehaviour
 {
+    public static Gameplay_Manager instance;
     #region Variables
     
     public GameObject[] LevelM1;
@@ -18,7 +19,13 @@ public class Gameplay_Manager : MonoBehaviour
     
     #endregion
 
-    #region Start/Update
+    #region Awake/Start/Update
+
+    private void Awake()
+    {
+        
+    }
+
     void Start()
     {
         Debug.Log("Index is ==  "+PlayerPrefs.GetInt("SelectedLevelM1"));
@@ -26,6 +33,7 @@ public class Gameplay_Manager : MonoBehaviour
         ActivateModeAndLevel();
         activateSelectedCharacter();
         InitiationDebug();
+        Debug.Log( PlayerPrefs.GetInt("M1UnlockableLevel"));
     }
 
     private void Update()
@@ -67,9 +75,6 @@ public class Gameplay_Manager : MonoBehaviour
         // and the clicked level will be activated. "currentLevel" is set to be same as the value of selected level, it can
         // be later used for other purposes such as level lock and unlock system, level objectives assignment etc.
     }
-
-    
-
     #endregion
 
     #region KeyPress and Presscount increment
@@ -101,28 +106,37 @@ public class Gameplay_Manager : MonoBehaviour
     {
         //If level completion requirement (Pressing the button corresponding to press count of the level) is fulfilled, level completion panel will
         // appear until level 4, after level 4, game completion panel will appear as level 5 is the last level.
+      
         if (PlayerPrefs.GetString("Mode")=="Mode1"&&PlayerPrefs.GetInt("SelectedLevelM1")<=3&&pressCount==PlayerPrefs.GetInt("M1PressLimit"))
         {
             LvLCompletePanel.SetActive(true);
+            
         }
+        
         else if(PlayerPrefs.GetString("Mode")=="Mode1"&&PlayerPrefs.GetInt("SelectedLevelM1")==4&&pressCount==PlayerPrefs.GetInt("M1PressLimit"))
         {
-            
             GameCompletePanel.SetActive(true);
+           
         }
-       
+        if (PlayerPrefs.GetInt("M1UnlockableLevel")==PlayerPrefs.GetInt("SelectedLevelM1"))
+        {
+            PlayerPrefs.SetInt("M1UnlockableLevel",PlayerPrefs.GetInt("SelectedLevelM1")+1);
+        }
+        
         //If level completion requirement (Pressing the button corresponding to press count of the level) is fulfilled, level completion panel will
-        // appear until level 4, after level 4, game completion panel will appear as level 5 is the last level. 
+        // appear until level 4, after level 4, game completion panel will appear as level 5 is the last level. An unlockable level is also set using player prefs,
+        //Once a level is completed, it will be unlocked/interactable in the main menu. 
         if (PlayerPrefs.GetString("Mode")=="Mode2"&&PlayerPrefs.GetInt("SelectedLevelM2")<=3&&pressCount==PlayerPrefs.GetInt("M2PressLimit"))
         {
-           
             LvLCompletePanel.SetActive(true);
-           
-            
         }
         else if(PlayerPrefs.GetString("Mode")=="Mode2"&&PlayerPrefs.GetInt("SelectedLevelM2")==4&&pressCount==PlayerPrefs.GetInt("M2PressLimit"))
         {
             GameCompletePanel.SetActive(true);
+        }
+        if (PlayerPrefs.GetInt("M2UnlockableLevel")==PlayerPrefs.GetInt("SelectedLevelM2"))
+        {
+            PlayerPrefs.SetInt("M2UnlockableLevel",PlayerPrefs.GetInt("SelectedLevelM2")+1);
         }
         //Level Complete functionality. Level is completed based on user input, each spacebar press increments the presscount,
         //when presscount reaches presscount limit for that level, level is completed.
@@ -143,7 +157,6 @@ public class Gameplay_Manager : MonoBehaviour
             SceneManager.LoadScene("Gameplay");
             PlayerPrefs.SetInt("M1PressLimit",PlayerPrefs.GetInt("M1PressLimit")+1);
         }
-       
         else if (PlayerPrefs.GetString("Mode")=="Mode2")
         {
             Debug.Log(" Click Functional For Mode 2");
