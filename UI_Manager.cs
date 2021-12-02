@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +25,10 @@ public class UI_Manager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(this);
         }
+        M1levelsUnlockSystem();
+        M2levelsUnlockSystem();
+        
+        
     }
 
     public void CharacterSelection()
@@ -127,6 +131,30 @@ public class UI_Manager : MonoBehaviour
         // press limit count is same as defined by the user in the inspector using the parameter/button link.
         //It is retrieved in gameplay manager to implement level/gameplay functionality.
     }
-    
+
+    public void M1levelsUnlockSystem()
+    {
+        for (int i = 1; i < 5; i++)
+        {
+            Mode1LvLs[i].GetComponent<Button>().interactable = false;
+        }
+
+        for (int k = 0; k < PlayerPrefs.GetInt("M1UnlockableLevel"); k++)
+        {
+            Mode1LvLs[k].GetComponent<Button>().interactable = true;
+        }
+        
+    }
+    public void M2levelsUnlockSystem()
+    {
+        for (int l = 1; l < 5; l++)
+        {
+            Mode2Lvls[l].GetComponent<Button>().interactable = false;
+        }
+        for (int m = 0; m < PlayerPrefs.GetInt("M2UnlockableLevel"); m++)
+        {
+            Mode2Lvls[m].GetComponent<Button>().interactable = true;
+        }
+    }
     
 }
