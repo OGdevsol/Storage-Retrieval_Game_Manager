@@ -15,7 +15,7 @@ public class Gameplay_Manager : MonoBehaviour
     public GameObject LvLCompletePanel;
     public GameObject GameCompletePanel;
     private int currentLevel;
-    private int pressCount;
+    public int pressCount;
     
     #endregion
 
@@ -23,7 +23,7 @@ public class Gameplay_Manager : MonoBehaviour
 
     private void Awake()
     {
-        
+        instance = this;
     }
 
     void Start()
@@ -62,8 +62,21 @@ public class Gameplay_Manager : MonoBehaviour
             currentLevel = PlayerPrefs.GetInt("SelectedLevelM1");
             UI_Manager.instance.M1pressLimitAssign(PlayerPrefs.GetInt("M1PressLimit"));
         }
+        else if (PlayerPrefs.GetString("Mode")=="Mode1"&&PlayerPrefs.GetInt("SelectedLevelM1")==4)
+        {
+            LevelM1[PlayerPrefs.GetInt("SelectedLevelM1")].SetActive(true);
+            currentLevel = PlayerPrefs.GetInt("SelectedLevelM1");
+            UI_Manager.instance.M1pressLimitAssign(PlayerPrefs.GetInt("M1PressLimit"));
+        }
          
         else if (PlayerPrefs.GetString("Mode")=="Mode2"&&PlayerPrefs.GetInt("SelectedLevelM2")<=3)
+        {
+            LevelM2[PlayerPrefs.GetInt("SelectedLevelM2")].SetActive(true);
+            currentLevel = PlayerPrefs.GetInt("SelectedLevelM2");
+            UI_Manager.instance.M2pressLimitAssign(PlayerPrefs.GetInt("M2PressLimit"));
+        }
+
+        else   if (PlayerPrefs.GetString("Mode")=="Mode2"&&PlayerPrefs.GetInt("SelectedLevelM2")==4)
         {
             LevelM2[PlayerPrefs.GetInt("SelectedLevelM2")].SetActive(true);
             currentLevel = PlayerPrefs.GetInt("SelectedLevelM2");
@@ -97,6 +110,12 @@ public class Gameplay_Manager : MonoBehaviour
             //it has reached the press count limit.
         }
     }
+
+    public void increment()
+    {
+        pressCount++;
+    }
+    //Give levels an actual functionality by increasing pressCount after every coin is collected in >>coinMove script
     
 
     #endregion
